@@ -1,23 +1,32 @@
 console.log('Hello this is app.js');
 let addBtn = document.querySelector('#addBtn');
+let addTitle = document.querySelector('#addTitle');
 let addTxt = document.querySelector('#addTxt');
 let delBtn = document.getElementById('delBtn')
 let notes = localStorage.getItem('notes');
+let titles = localStorage.getItem('titles');
 let notesObj;
+let notesTitle;
 if (notes == null) {
     notesObj = [];
+    notesTitle = [];
 } else {
     notesObj = JSON.parse(notes);
+    notesTitle = JSON.parse(titles)
 }
 showNotes();
 addBtn.addEventListener('click',function(){
     if(addTxt.value === ''){
         return;
     }
+    notesTitle.push(addTitle.value)
     notesObj.push(addTxt.value);
+    addTitle.value = '';
     addTxt.value = "";
     console.log(notesObj)
+    localStorage.setItem('titles',JSON.stringify(notesTitle));
     localStorage.setItem('notes',JSON.stringify(notesObj));
+    titles = localStorage.getItem('titles');
     notes = localStorage.getItem('notes');
     showNotes();
 })
@@ -31,9 +40,9 @@ function showNotes() {
 
         let html ="";
         notesObj.forEach(function (element,index) {
-            html+=`<div class="cardBody mx-2 my-2" style="width: 18rem;">
+            html+=`<div class="card cardBody mx-2 my-2" style="width: 20rem;">
             <div class="card-body">
-              <h5 class="card-title">Note ${index+1}</h5>
+              <h5 class="card-title">${notesTitle[index]}</h5>
               <p class="card-text">${element}</p>
               <button id="${index}" onclick="del(this.id)" class="btn btn-primary">Delete Note</button>
             </div>
@@ -46,8 +55,11 @@ function showNotes() {
 }
 
 function del(index){
+    notesTitle.splice(index, 1);
     notesObj.splice(index, 1);
+    localStorage.setItem('titles',JSON.stringify(notesTitle));
     localStorage.setItem('notes',JSON.stringify(notesObj));
+    titles = localStorage.getItem('titles');
     notes = localStorage.getItem('notes');
     showNotes();
 }
